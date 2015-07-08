@@ -1,0 +1,1387 @@
+-TITLE SPITBOL TEST PROGRAM #1 -- DIAGNOSTICS PHASE ONE                 00001000
+*                                                                       00002000
+*        THIS IS A STANDARD TEST PROGRAM FOR SPITBOL WHICH TESTS        00003000
+*        OUT FUNCTIONS, OPERATORS AND DATATYPE MANIPULATIONS            00004000
+*                                                                       00005000
+         &DUMP = 2                                                      00006000
+         TRACE(.TEST)                                                   00007000
+         &TRACE = 1000000                                               00008000
+         STARS =                     '  ERROR DETECTED          ***'    00009000
+         &ERRLIMIT = 1000                                               00010000
+         SETEXIT(.ERRORS)         ;*        SET INTERRUPT LOCATION      00011000
+         OUTPUT = '************************************************'    00012000
+         OUTPUT = '**** S P I T B O L    D I A G N O S T I C S ****'    00013000
+         OUTPUT = '****          P H A S E    O N E            ****'    00014000
+         OUTPUT = '************************************************'    00015000
+         OUTPUT = '****  ANY TRACE OUTPUT INDICATES AN ERROR   ****'    00016000
+         OUTPUT = '************************************************'    00017000
+-EJECT                                                                  00018000
+*                                                                       00019000
+*        TEST REPLACE FUNCTION                                          00020000
+*                                                                       00021000
+         TEST = DIFFER(REPLACE('AXXBYYY','XY','01'),'A00B111') STARS    00022000
+         A = REPLACE(&ALPHABET,'XY','AB')                               00023000
+         TEST = DIFFER(REPLACE('AXY',&ALPHABET,A),'AAB') STARS          00024000
+*                                                                       00025000
+*        TEST LPAD,RPAD FUNCTIONS                                       00026000
+*                                                                       00027000
+         TEST = DIFFER(LPAD('ABC',5,'X'),'XXABC') STARS                 00028000
+         TEST = DIFFER(RPAD('ABC',5,'X'),'ABCXX') STARS                 00029000
+         TEST = DIFFER(LPAD(12,5),'   12') STARS                        00030000
+         TEST = DIFFER(RPAD(10,4),'10  ') STARS                         00031000
+         TEST = DIFFER(LPAD('ABC',2),'ABC') STARS                       00032000
+         TEST = DIFFER(RPAD('AB',1),'AB') STARS                         00033000
+         TEST = DIFFER(LPAD('AB',2),'AB') STARS                         00034000
+         TEST = DIFFER(LPAD()) STARS                                    00035000
+         TEST = DIFFER(LPAD(,5),'     ') STARS                          00036000
+*                                                                       00037000
+*        TEST CONVERT FUNCTION                                          00038000
+*                                                                       00039000
+         TEST = DIFFER(CONVERT('12','INTEGER') , 12) STARS              00040000
+         TEST = DIFFER(CONVERT(2.5,'INTEGER'),2)       STARS            00041000
+         TEST = DIFFER(CONVERT(2,'REAL'),2.0) STARS                     00042000
+         TEST = DIFFER(CONVERT('.2','REAL'),0.2) STARS                  00043000
+-EJECT                                                                  00044000
+*                                                                       00045000
+*        TEST REVERSE FUNCTION                                          00046000
+*                                                                       00047000
+         TEST = DIFFER(REVERSE('123'),'321') STARS                      00048000
+         TEST = DIFFER(REVERSE()) STARS                                 00049000
+         TEST = DIFFER(REVERSE(12),'21') STARS                          00050000
+*                                                                       00051000
+*        TEST DATATYPE FUNCTION                                         00052000
+*                                                                       00053000
+         TEST = DIFFER(DATATYPE('JKL'),'STRING') STARS                  00054000
+         TEST = DIFFER(DATATYPE(12),'INTEGER') STARS                    00055000
+         TEST = DIFFER(DATATYPE(1.33),'REAL') STARS                     00056000
+         TEST = DIFFER(DATATYPE(NULL),'STRING') STARS                   00057000
+-EJECT                                                                  00058000
+*                                                                       00059000
+*        TEST ARITHMETIC OPERATORS                                      00060000
+*                                                                       00061000
+         TEST = DIFFER(3 + 2,5) STARS                                   00062000
+         TEST = DIFFER(3 - 2,1) STARS                                   00063000
+         TEST = DIFFER(3 * 2,6) STARS                                   00064000
+         TEST = DIFFER(5 / 2,2) STARS                                   00065000
+         TEST = DIFFER(2 ** 3,8) STARS                                  00066000
+         TEST = DIFFER(3 + 1,4) STARS                                   00067000
+         TEST = DIFFER(3 - 1,2) STARS                                   00068000
+         TEST = DIFFER('3' + 2,5) STARS                                 00069000
+         TEST = DIFFER(3 + '-2',1) STARS                                00070000
+         TEST = DIFFER('1' + '0',1) STARS                               00071000
+         TEST = DIFFER(5 + NULL,5) STARS                                00072000
+         TEST = DIFFER(-5,0 - 5) STARS                                  00073000
+         TEST = DIFFER(+'4',4) STARS                                    00074000
+         TEST = DIFFER(2.0 + 3.0,5.0) STARS                             00075000
+         TEST = DIFFER(3.0 - 1.0,2.0) STARS                             00076000
+         TEST = DIFFER(3.0 * 2.0,6.0) STARS                             00077000
+         TEST = DIFFER(3.0 / 2.0,1.5) STARS                             00078000
+         TEST = DIFFER(3.0 ** 3,27.0) STARS                             00079000
+         TEST = DIFFER(-1.0,0.0 - 1.0) STARS                            00080000
+*                                                                       00081000
+*        TEST MIXED MODE                                                00082000
+*                                                                       00083000
+         TEST = DIFFER(1 + 2.0,3.0) STARS                               00084000
+         TEST = DIFFER(3.0 / 2,1.5) STARS                               00085000
+-EJECT                                                                  00086000
+*                                                                       00087000
+*        TEST FUNCTIONS                                                 00088000
+*                                                                       00089000
+*        FIRST, A SIMPLE TEST OF A FACTORIAL FUNCTION                   00090000
+*                                                                       00091000
+         DEFINE('FACT(N)')                  :(FACTEND)                  00092000
+FACT     FACT = EQ(N,1) 1         :S(RETURN)                            00093000
+         FACT = N * FACT(N - 1)             :(RETURN)                   00094000
+FACTEND  TEST = NE(FACT(5),120) STARS                                   00095000
+         TEST = DIFFER(OPSYN(.FACTO,'FACT')) STARS                      00096000
+         TEST = DIFFER(FACTO(4),24) STARS                               00097000
+*                                                                       00098000
+*        SEE IF ALTERNATE ENTRY POINT WORKS OK                          00099000
+*                                                                       00100000
+         DEFINE('FACT2(N)',.FACT2ENT)       :(FACT2ENDF)                00101000
+FACT2ENT FACT2 = EQ(N,1) 1        :S(RETURN)                            00102000
+         FACT2 = N * FACT2(N - 1) :(RETURN)                             00103000
+FACT2ENDF OUTPUT = NE(FACT(6),720) STARS                                00104000
+*                                                                       00105000
+*        TEST FUNCTION REDEFINITION AND CASE OF ARGUMENT = FUNC NAME    00106000
+*                                                                       00107000
+         TEST = DIFFER(DEFINE('FACT(FACT)','FACT3')) STARS              00108000
+.                                           :(FACT2END)                 00109000
+FACT3    FACT = NE(FACT,1) FACT * FACT(FACT - 1)                        00110000
+.                                           :(RETURN)                   00111000
+FACT2END                                                                00112000
+         TEST = NE(FACT(4),24) STARS                                    00113000
+*                                                                       00114000
+*        TEST OUT LOCALS                                                00115000
+*                                                                       00116000
+         DEFINE('LFUNC(A,B,C)D,E,F')        :(LFUNCEND)                 00117000
+LFUNC    TEST = ¬(IDENT(A,'A') IDENT(B,'B') IDENT(C,'C')) STARS         00118000
+         TEST = ¬(IDENT(D) IDENT(E) IDENT(F)) STARS                     00119000
+         A = 'AA' ; B = 'BB' ; C = 'CC' ; D = 'DD' ; E = 'EE' ; F = 'FF'00120000
+.                                 :(RETURN)                             00121000
+LFUNCEND AA = 'A' ; BB = 'B' ; CC = 'C'                                 00122000
+         D = 'D' ; E = 'E' ; F = 'F'                                    00123000
+         A = 'X' ; B = 'Y' ; C = 'Z'                                    00124000
+         TEST = DIFFER(LFUNC(AA,BB,CC)) STARS                           00125000
+         TEST = ¬(IDENT(A,'X') IDENT(B,'Y') IDENT(C,'Z')) STARS         00126000
+         TEST = ¬(IDENT(AA,'A') IDENT(BB,'B') IDENT(CC,'C')) STARS      00127000
+         TEST = ¬(IDENT(D,'D') IDENT(E,'E') IDENT(F,'F')) STARS         00128000
+*                                                                       00129000
+*        TEST NRETURN                                                   00130000
+*                                                                       00131000
+         DEFINE('NTEST()')                  :(ENDNTEST)                 00132000
+NTEST    NTEST = .A                         :(NRETURN)                  00133000
+ENDNTEST A = 27                                                         00134000
+         TEST = DIFFER(NTEST(),27) STARS                                00135000
+.              :F(ST59)            ;ST59                                00136000
+         NTEST() = 26                                                   00137000
+.              :F(ST60)            ;ST60                                00138000
+         TEST = DIFFER(A,26) STARS                                      00139000
+-EJECT                                                                  00140000
+*                                                                       00141000
+*        CONTINUE TEST OF FUNCTIONS                                     00142000
+*                                                                       00143000
+*                                                                       00144000
+*        TEST FAILURE RETURN                                            00145000
+*                                                                       00146000
+         DEFINE('FAILURE()')                :(FAILEND)                  00147000
+FAILURE                           :(FRETURN)                            00148000
+FAILEND  TEST = FAILURE() STARS                                         00149000
+-EJECT                                                                  00150000
+*                                                                       00151000
+*        TEST OPSYN FOR OPERATORS                                       00152000
+*                                                                       00153000
+         OPSYN('@',.DUPL,2)                                             00154000
+         OPSYN('|',.SIZE,1)                                             00155000
+         TEST = DIFFER('A' @ 4,'AAAA') STARS                            00156000
+         TEST = DIFFER(|'STRING',6) STARS                               00157000
+*                                                                       00158000
+*        TEST OUT ARRAY FACILITY                                        00159000
+*                                                                       00160000
+         A = ARRAY(3)                                                   00161000
+         TEST = DIFFER(A<1>) STARS                                      00162000
+         A<2> = 4.5                                                     00163000
+         TEST = DIFFER(A<2>,4.5) STARS                                  00164000
+         TEST = ?A<4> STARS                                             00165000
+         TEST = ?A<0> STARS                                             00166000
+         TEST = DIFFER(PROTOTYPE(A),3) STARS                            00167000
+         B = ARRAY(3,10)                                                00168000
+         TEST = DIFFER(B<2>,10) STARS                                   00169000
+         B = ARRAY('3')                                                 00170000
+         B<2> = 'A'                                                     00171000
+         TEST = DIFFER(B<2>,'A') STARS                                  00172000
+         C = ARRAY('2,2')                                               00173000
+         C<1,2> = '*'                                                   00174000
+         TEST = DIFFER(C<1,2>,'*') STARS                                00175000
+         TEST = DIFFER(PROTOTYPE(C),'2,2') STARS                        00176000
+         D = ARRAY('-1:1,2')                                            00177000
+         D<-1,1> = 0                                                    00178000
+         TEST = DIFFER(D<-1,1>,0) STARS                                 00179000
+         TEST = ?D<-2,1> STARS                                          00180000
+         TEST = ?D<2,1> STARS                                           00181000
+-EJECT                                                                  00182000
+*                                                                       00183000
+*        TEST PROGRAM DEFINED DATATYPE FUNCTIONS                        00184000
+*                                                                       00185000
+         DATA('NODE(VAL,LSON,RSON)')                                    00186000
+         A = NODE('X','Y','Z')                                          00187000
+         TEST = DIFFER(DATATYPE(A),'NODE') STARS                        00188000
+         TEST = DIFFER(VAL(A),'X') STARS                                00189000
+         B = NODE()                                                     00190000
+         TEST = DIFFER(RSON(B)) STARS                                   00191000
+         LSON(B) = A                                                    00192000
+         TEST = DIFFER(RSON(LSON(B)),'Z') STARS                         00193000
+         TEST = DIFFER(VALUE('B'),B) STARS                              00194000
+*                                                                       00195000
+*        TEST MULTIPLE USE OF FIELD FUNCTION NAME                       00196000
+*                                                                       00197000
+         DATA('CLUNK(VALUE,LSON)')                                      00198000
+         TEST = DIFFER(RSON(LSON(B)),'Z') STARS                         00199000
+         TEST = DIFFER(VALUE('B'),B) STARS                              00200000
+         C = CLUNK('A','B')                                             00201000
+         TEST = DIFFER(LSON(C),'B') STARS                               00202000
+-EJECT                                                                  00203000
+*                                                                       00204000
+*        TEST NUMERICAL PREDICATES                                      00205000
+*                                                                       00206000
+         TEST = LT(5,4) STARS                                           00207000
+         TEST = LT(4,4) STARS                                           00208000
+         TEST = ¬LT(4,5) STARS                                          00209000
+         TEST = LE(5,2) STARS                                           00210000
+         TEST = ¬LE(4,4) STARS                                          00211000
+         TEST = ¬LE(4,10) STARS                                         00212000
+         TEST = EQ(4,5) STARS                                           00213000
+         TEST = EQ(5,4) STARS                                           00214000
+         TEST = ¬EQ(5,5) STARS                                          00215000
+         TEST = NE(4,4) STARS                                           00216000
+         TEST = ¬NE(4,6) STARS                                          00217000
+         TEST = ¬NE(6,4) STARS                                          00218000
+         TEST = GT(4,6) STARS                                           00219000
+         TEST = GT(4,4) STARS                                           00220000
+         TEST = ¬GT(5,2) STARS                                          00221000
+         TEST = GE(5,7) STARS                                           00222000
+         TEST = ¬GE(4,4) STARS                                          00223000
+         TEST = ¬GE(7,5) STARS                                          00224000
+         TEST = NE(4,5 - 1) STARS                                       00225000
+         TEST = GT(4,3 + 1) STARS                                       00226000
+         TEST = LE(20,5 + 6) STARS                                      00227000
+         TEST = EQ(1.0,2.0) STARS                                       00228000
+         TEST = GT(-2.0,-1.0) STARS                                     00229000
+         TEST = GT(-3.0,4.0) STARS                                      00230000
+         TEST = NE('12',12) STARS                                       00231000
+         TEST = NE('12',12.0) STARS                                     00232000
+         TEST = ¬CONVERT(BAL,'PATTERN') STARS                           00233000
+-EJECT                                                                  00234000
+*                                                                       00235000
+*        TEST INTEGER                                                   00236000
+*                                                                       00237000
+         TEST = INTEGER('ABC') STARS                                    00238000
+         TEST = ¬INTEGER(12) STARS                                      00239000
+         TEST = ¬INTEGER('12') STARS                                    00240000
+*                                                                       00241000
+*        TEST SIZE                                                      00242000
+*                                                                       00243000
+         TEST = NE(SIZE('ABC'),3) STARS                                 00244000
+         TEST = NE(SIZE(12),2) STARS                                    00245000
+         TEST = NE(SIZE(NULL),0) STARS                                  00246000
+*                                                                       00247000
+*        TEST LGT                                                       00248000
+*                                                                       00249000
+         TEST = LGT('ABC','XYZ') STARS                                  00250000
+         TEST = LGT('ABC','ABC') STARS                                  00251000
+         TEST = ¬LGT('XYZ','ABC') STARS                                 00252000
+         TEST = LGT(NULL,'ABC') STARS                                   00253000
+         TEST = ¬LGT('ABC',NULL) STARS                                  00254000
+*                                                                       00255000
+*        TEST INDIRECT ADDRESSING                                       00256000
+*                                                                       00257000
+         TEST = DIFFER($'BAL',BAL) STARS                                00258000
+         TEST = DIFFER($.BAL,BAL) STARS                                 00259000
+         $'QQ' = 'X'                                                    00260000
+         TEST = DIFFER(QQ,'X') STARS                                    00261000
+         TEST = DIFFER($'GARBAGE') STARS                                00262000
+         A = ARRAY(3)                                                   00263000
+         A<2> = 'X'                                                     00264000
+         TEST = DIFFER($.A<2>,'X') STARS                                00265000
+-EJECT                                                                  00266000
+*                                                                       00267000
+*        TEST CONCATENATION                                             00268000
+*                                                                       00269000
+         TEST = DIFFER('A' 'B','AB')        STARS                       00270000
+         TEST = DIFFER('A' 'B' 'C','ABC') STARS                         00271000
+         TEST = DIFFER(1 2,'12') STARS                                  00272000
+         TEST = DIFFER(2 2 2,'222') STARS                               00273000
+         TEST = DIFFER(1 3.4,'13.4') STARS                              00274000
+         TEST = DIFFER(BAL NULL,BAL)        STARS                       00275000
+         TEST = DIFFER(NULL BAL,BAL) STARS                              00276000
+*                                                                       00277000
+*        TEST DREALS                                                    00278000
+*                                                                       00279000
+         TEST = DIFFER(1.0D2 + 2.0D2,3.0D2) STARS                       00280000
+         TEST = DIFFER(2.5D0 * 2.0D0,5.00D0) STARS                      00281000
+         TEST = DIFFER(3.0D0 / 3.0D0,1.0D0) STARS                       00282000
+         TEST = DIFFER(4.0D0 - 3.0D0,1.0D0) STARS                       00283000
+         TEST = DIFFER(3.D0 + 1.,4.D0) STARS                            00284000
+         TEST = DIFFER(1. + 3.D0,4.D0) STARS                            00285000
+         TEST = DIFFER(1.0D0 + 1,2.0D0) STARS                           00286000
+         TEST = DIFFER(3 + 1.0D0,4.0D0) STARS                           00287000
+         TEST = DIFFER(3.0D0 ** 3,27.0D0) STARS                         00288000
+-EJECT                                                                  00289000
+*                                                                       00290000
+*        TEST REMDR                                                     00291000
+*                                                                       00292000
+         TEST = DIFFER(REMDR(10,3),1) STARS                             00293000
+         TEST = DIFFER(REMDR(11,10),1) STARS                            00294000
+*                                                                       00295000
+*        TEST DUPL                                                      00296000
+*                                                                       00297000
+         TEST = DIFFER(DUPL('ABC',2),'ABCABC') STARS                    00298000
+         TEST = DIFFER(DUPL(NULL,10),NULL) STARS                        00299000
+         TEST = DIFFER(DUPL('ABCDEFG',0),NULL) STARS                    00300000
+         TEST = DIFFER(DUPL(1,10),'1111111111')  STARS                  00301000
+*                                                                       00302000
+*        TEST TABLE FACILITY                                            00303000
+*                                                                       00304000
+         T = TABLE(10)                                                  00305000
+         TEST = DIFFER(T<'CAT'>) STARS                                  00306000
+         T<'CAT'> = 'DOG'                                               00307000
+         TEST = DIFFER(T<'CAT'>,'DOG')   STARS                          00308000
+         T<7> = 45                                                      00309000
+         TEST = DIFFER(T<7>,45)   STARS                                 00310000
+         TEST = DIFFER(T<'CAT'>,'DOG')  STARS                           00311000
+         TA = CONVERT(T,'ARRAY')                                        00312000
+         TEST = DIFFER(PROTOTYPE(TA),'2,2') STARS                       00313000
+         ATA = CONVERT(TA,'TABLE')                                      00314000
+         TEST = DIFFER(ATA<7>,45) STARS                                 00315000
+         TEST = DIFFER(ATA<'CAT'>,'DOG') STARS                          00316000
+*                                                                       00317000
+*        TEST ITEM FUNCTION                                             00318000
+*                                                                       00319000
+         AAA = ARRAY(10)                                                00320000
+         ITEM(AAA,1) = 5                                                00321000
+         TEST = DIFFER(ITEM(AAA,1),5) STARS                             00322000
+         TEST = DIFFER(AAA<1>,5) STARS                                  00323000
+         AAA<2> = 22                                                    00324000
+         TEST = DIFFER(ITEM(AAA,2),22) STARS                            00325000
+         AMA = ARRAY('2,2,2,2')                                         00326000
+         ITEM(AMA,1,2,1,2) = 1212                                       00327000
+         TEST = DIFFER(ITEM(AMA,1,2,1,2),1212) STARS                    00328000
+         TEST = DIFFER(AMA<1,2,1,2>,1212) STARS                         00329000
+         AMA<2,1,2,1> = 2121                                            00330000
+         TEST = DIFFER(ITEM(AMA,2,1,2,1),2121) STARS                    00331000
+-EJECT                                                                  00332000
+*                                                                       00333000
+*        TEST EVAL                                                      00334000
+*                                                                       00335000
+         EXPR = *('ABC' 'DEF')                                          00336000
+         TEST = DIFFER(EVAL(EXPR),'ABCDEF') STARS                       00337000
+         Q = 'QQQ'                                                      00338000
+         SEXP = *Q                                                      00339000
+         TEST = DIFFER(EVAL(SEXP),'QQQ') STARS                          00340000
+         FEXP = *IDENT(1,2)                                             00341000
+         TEST = EVAL(FEXP) STARS                                        00342000
+*                                                                       00343000
+*        TEST SUBSTR                                                    00344000
+*                                                                       00345000
+         TEST = DIFFER(SUBSTR('ABC',2,1),'B') STARS                     00346000
+         TEST = DIFFER(SUBSTR('ABCDEF',1,5),'ABCDE') STARS              00347000
+         TEST = SUBSTR('ABC',50,1) STARS                                00348000
+         TEST = SUBSTR('ABC',81,50) STARS                               00349000
+         TEST = SUBSTR(NULL,1,1) STARS                                  00350000
+*                                                                       00351000
+*        TEST ARG                                                       00352000
+*                                                                       00353000
+JLAB     DEFINE('JLAB(A,B,C)D,E,F')                                     00354000
+         TEST = DIFFER(ARG(.JLAB,1),'A') STARS                          00355000
+         TEST = DIFFER(ARG(.JLAB,3),'C') STARS                          00356000
+         TEST = ARG(.JLAB,0) STARS                                      00357000
+         TEST = ARG(.JLAB,4) STARS                                      00358000
+*                                                                       00359000
+*        TEST LOCAL                                                     00360000
+*                                                                       00361000
+         TEST = DIFFER(LOCAL(.JLAB,1),'D') STARS                        00362000
+         TEST = DIFFER(LOCAL(.JLAB,3),'F') STARS                        00363000
+         TEST = LOCAL(.JLAB,0) STARS                                    00364000
+         TEST = LOCAL(.JLAB,4) STARS                                    00365000
+*                                                                       00366000
+*        TEST APPLY                                                     00367000
+*                                                                       00368000
+         TEST = APPLY(.EQ,1,2) STARS                                    00369000
+         TEST = ¬APPLY(.EQ,1,1) STARS                                   00370000
+         TEST = ¬APPLY(.EQ,0) STARS                                     00371000
+         TEST = ¬APPLY(.EQ,1,1,1) STARS                                 00372000
+         TEST = ¬IDENT(APPLY(.TRIM,'ABC '),'ABC') STARS                 00373000
+-EJECT                                                                  00374000
+*                                                                       00375000
+*        FINAL PROCESSING                                               00376000
+*                                                                       00377000
+         OUTPUT = '************************************************'    00378000
+         DIAGNOSTICS = 1000000 - &TRACE                                 00379000
+         EQ(DIAGNOSTICS,0)        :S(TERMINATE)                         00380000
+         &DUMP = 2                                                      00381000
+         OUTPUT = '****    NUMBER OF ERRORS DETECTED  '                 00382000
+.                                 LPAD(DIAGNOSTICS,5) '    ****'        00383000
+         OUTPUT = '**** E N D    O F     D I A G N O S T I C S ****'    00384000
+         OUTPUT = '************************************************'    00385000
+.                                           :(END)                      00386000
+TERMINATE OUTPUT = '**** N O     E R R O R S    D E T E C T E D ****'   00387000
+         OUTPUT = '**** E N D    O F     D I A G N O S T I C S ****'    00388000
+         OUTPUT = '************************************************'    00389000
+ :(END)                                                                 00390000
+*                                                                       00391000
+*        ERROR HANDLING ROUTINE                                         00392000
+*                                                                       00393000
+ERRORS   OUTPUT = '****  ERROR AT '                                     00394000
+.        LPAD(&LASTNO,4)   '      &ERRTYPE = ' LPAD(&ERRTYPE,7,' ')     00395000
+.                                           ' ****'                     00396000
+         &TRACE = &TRACE - 1                                            00397000
+         SETEXIT(.ERRORS)                   :(CONTINUE)                 00398000
+END                                                                     00399000
+./*                                                                     00400000
+-TITLE SPITBOL TEST PROGRAM #2 -- DIAGNOSTICS PHASE TWO                 00401000
+*                                                                       00402000
+*        THIS IS THE STANDARD TEST PROGRAM FOR SPITBOL WHICH            00403000
+*        TESTS PATTERN MATCHING USING BOTH FULLSCAN AND QUICKSCAN       00404000
+*                                                                       00405000
+         &DUMP = 2                                                      00406000
+         DEFINE('ERROR()')                                              00407000
+         &TRACE = 1000                                                  00408000
+         &ERRLIMIT = 100                                                00409000
+         TRACE(.ERRTYPE,'KEYWORD')                                      00410000
+         &FULLSCAN = 0                                                  00411000
+         OUTPUT = '**********************************************'      00412000
+         OUTPUT = '**** SPITBOL DIAGNOSTICS -- PHASE TWO     ****'      00413000
+         OUTPUT = '**********************************************'      00414000
+FLOOP    ERRCOUNT = 0                                                   00415000
+         OUTPUT = '****           &FULLSCAN = ' &FULLSCAN               00416000
+.        '              ****'                                           00417000
+         TEST = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'                            00418000
+*                                                                       00419000
+*        TEST PATTERN MATCHING AGAINST SIMPLE STRING                    00420000
+*                                                                       00421000
+         TEST  'ABC' :S(S01) ; ERROR()                                  00422000
+S01      TEST 'BCD' :S(S02) ; ERROR()                                   00423000
+S02      TEST 'XYZ' :S(S03) ; ERROR()                                   00424000
+S03      TEST 'ABD' :F(S04) ; ERROR()                                   00425000
+S04      &ANCHOR = 1                                                    00426000
+         TEST 'ABC' :S(S05) ; ERROR()                                   00427000
+S05      TEST 'BCD' :F(S06) ; ERROR()                                   00428000
+S06      TEST TEST :S(S06A) ; ERROR()                                   00429000
+*                                                                       00430000
+*        TEST SIMPLE CASES OF $                                         00431000
+*                                                                       00432000
+S06A     TEST 'ABC' $ VAR :S(S07) ; ERROR()                             00433000
+S07      IDENT(VAR,'ABC') :S(S08) ; ERROR()                             00434000
+S08      TEST 'ABC' . VARD :S(S09) ; ERROR()                            00435000
+S09      IDENT(VARD,'ABC') :S(S10) ; ERROR()                            00436000
+*                                                                       00437000
+*        TEST LEN                                                       00438000
+*                                                                       00439000
+S10      &ANCHOR = 0                                                    00440000
+         TEST LEN(3) $ VARL :S(S11) ; ERROR()                           00441000
+S11      IDENT(VARL,'ABC') :S(S12) ; ERROR()                            00442000
+S12      TEST LEN(26) $ VARL :S(S13) ; ERROR()                          00443000
+S13      IDENT(VARL,TEST) :S(S14) ; ERROR()                             00444000
+S14      TEST LEN(27) :F(S15) ; ERROR()                                 00445000
+*                                                                       00446000
+*        TEST TAB                                                       00447000
+*                                                                       00448000
+S15      TEST TAB(3) $ VART :S(S16) ; ERROR()                           00449000
+S16      IDENT(VART,'ABC') :S(S17) ; ERROR()                            00450000
+S17      TEST TAB(26) $ VART :S(S18) ; ERROR()                          00451000
+S18      IDENT(TEST,VART) :S(S19) ; ERROR()                             00452000
+S19      TEST TAB(0) $ VART :S(S20) ; ERROR()                           00453000
+S20      IDENT(VART) :S(S21) ; ERROR()                                  00454000
+-EJECT                                                                  00455000
+*                                                                       00456000
+*        TEST ARB                                                       00457000
+*                                                                       00458000
+S21      TEST ARB $ VARA 'C' :S(S22) ; ERROR()                          00459000
+S22      IDENT(VARA,'AB') :S(S23) ; ERROR()                             00460000
+S23      &ANCHOR = 1                                                    00461000
+         TEST ARB $ VARA POS(60) :F(S24) ; ERROR()                      00462000
+S24      IDENT(VARA,TEST) :S(S25) ; ERROR()                             00463000
+*                                                                       00464000
+*        TEST POS                                                       00465000
+*                                                                       00466000
+S25      TEST ARB $ VARA POS(2) $ VARP :S(S26) ; ERROR()                00467000
+S26      (IDENT(VARA,'AB') IDENT(VARP)) :S(S27) ; ERROR()               00468000
+S27      &ANCHOR = 0                                                    00469000
+         TEST ARB $ VARA POS(26) $ VARP :S(S28) ; ERROR()               00470000
+S28      (IDENT(VARA,TEST) IDENT(VARP)) : S(S29) ; ERROR()              00471000
+S29      TEST ARB $ VARA POS(0) $ VARP :S(S30) ; ERROR()                00472000
+S30      IDENT(VARA VARP) :S(S31) ; ERROR()                             00473000
+S31      TEST POS(0) ARB $ VARA POS(26) :S(S32) ; ERROR()               00474000
+S32      IDENT(TEST,VARA) :S(S33) ; ERROR()                             00475000
+S33      TEST POS(2) ARB $ VARA POS(3) :S(S34) ; ERROR()                00476000
+S34      IDENT(VARA,'C') :S(S35) ; ERROR()                              00477000
+S35      TEST POS(27) :F(S36) ; ERROR()                                 00478000
+*                                                                       00479000
+*        TEST RPOS                                                      00480000
+*                                                                       00481000
+S36      TEST ARB $ VARA RPOS(25) :S(S37) ; ERROR()                     00482000
+S37      IDENT(VARA,'A') :S(S38) ; ERROR()                              00483000
+S38      TEST ARB $ VARA RPOS(0) :S(S39) ; ERROR()                      00484000
+S39      IDENT(TEST,VARA) :S(S39A) ; ERROR()                            00485000
+S39A     TEST ARB $ VARA RPOS(26) :S(S40) ; ERROR()                     00486000
+S40      IDENT(VARA) :S(S41) ; ERROR()                                  00487000
+S41      TEST RPOS(27) :F(S42) ; ERROR()                                00488000
+*                                                                       00489000
+*        TEST RTAB                                                      00490000
+*                                                                       00491000
+S42      TEST RTAB(26) $ VARA :S(S43) ; ERROR()                         00492000
+S43      IDENT(VARA) :S(S44) ; ERROR()                                  00493000
+S44      TEST RTAB(27) :F(S45) ; ERROR()                                00494000
+S45      TEST RTAB(0) $ VARA :S(S46) ; ERROR()                          00495000
+S46      IDENT(VARA,TEST) :S(S47) ; ERROR()                             00496000
+S47      TEST RTAB(25) $ VARA :S(S48) ; ERROR()                         00497000
+S48      IDENT(VARA,'A') :S(S49) ; ERROR()                              00498000
+*                                                                       00499000
+*        TEST @                                                         00500000
+*                                                                       00501000
+S49      TEST LEN(6) @VARA :S(S50) ; ERROR()                            00502000
+S50      IDENT(VARA,6) :S(S51) ; ERROR()                                00503000
+S51      TEST @VARA :S(S52) ; ERROR()                                   00504000
+S52      IDENT(VARA,0) :S(S53) ; ERROR()                                00505000
+S53      TEST LEN(26) @VARA :S(S54) ; ERROR()                           00506000
+S54      IDENT(VARA,26) :S(S55) ; ERROR()                               00507000
+-EJECT                                                                  00508000
+*                                                                       00509000
+*        TEST BREAK                                                     00510000
+*                                                                       00511000
+S55      TEST BREAK('C') $ VARA :S(S56) ; ERROR()                       00512000
+S56      IDENT(VARA,'AB') :S(S57) ; ERROR()                             00513000
+S57      TEST BREAK('Z()') $ VARA :S(S58)     ; ERROR()                 00514000
+S58      IDENT(VARA,'ABCDEFGHIJKLMNOPQRSTUVWXY') :S(S59) ; ERROR()      00515000
+S59      TEST BREAK(',') :F(S60) ; ERROR()                              00516000
+S60      LPAD(TEST,1000) BREAK('A') $ VARA :S(S61) ; ERROR()            00517000
+S61      IDENT(LPAD(' ',1000 - 26),VARA) :S(S62) ; ERROR()              00518000
+S62      LPAD(TEST,1000) BREAK(',') :F(S63) ; ERROR()                   00519000
+*                                                                       00520000
+*        TEST SPAN                                                      00521000
+*                                                                       00522000
+S63      TEST SPAN(TEST) $ VARA :S(S64) ; ERROR()                       00523000
+S64      IDENT(TEST,VARA) :S(S65) ;ERROR()                              00524000
+S65      TEST SPAN('CDQ') $ VARA :S(S66) ; ERROR()                      00525000
+S66      IDENT(VARA,'CD') :S(S67) ; ERROR()                             00526000
+S67      TEST SPAN(',') :F(S68) ; ERROR()                               00527000
+S68      LPAD(TEST,1000) SPAN(' ') $ VARA :S(S69) ; ERROR()             00528000
+S69      IDENT(VARA,LPAD(' ',1000 - 26)) :S(S70) ; ERROR()              00529000
+*                                                                       00530000
+*        TEST BREAKX                                                    00531000
+*                                                                       00532000
+S70      (TEST TEST) POS(0) BREAKX('E') $ VARA '.' :F(S71) ; ERROR()    00533000
+S71      IDENT(VARA,TEST 'ABCD') :S(S72) ; ERROR()                      00534000
+S72      TEST BREAKX('.') :F(S73) ; ERROR()                             00535000
+*                                                                       00536000
+*        TEST ANY                                                       00537000
+*                                                                       00538000
+S73      TEST ANY('MXZ') $ VARA :S(S74) ; ERROR()                       00539000
+S74      IDENT(VARA,'M') :S(S75) ; ERROR()                              00540000
+S75      TEST ANY(',.') :F(S76) ; ERROR()                               00541000
+-EJECT                                                                  00542000
+*                                                                       00543000
+*        TEST NOTANY                                                    00544000
+*                                                                       00545000
+S76      TEST NOTANY('ABCDEFGHJKLMPQRSTUWXYZ') $ VARA :S(S77) ; ERROR() 00546000
+S77      IDENT(VARA,'I') :S(S78) ; ERROR()                              00547000
+S78      TEST NOTANY(TEST) :F(S79) ; ERROR()                            00548000
+*                                                                       00549000
+*        TEST REM                                                       00550000
+*                                                                       00551000
+S79      TEST REM $ VARA :S(S80) ; ERROR()                              00552000
+S80      IDENT(VARA,TEST) :S(S81) ; ERROR()                             00553000
+S81      TEST LEN(26) REM $ VARA :S(S82) ; ERROR()                      00554000
+S82      IDENT(VARA) :S(S83) ; ERROR()                                  00555000
+*                                                                       00556000
+*        TEST ALTERNATION                                               00557000
+*                                                                       00558000
+S83      TEST ('ABD' | 'AB') $ VARA :S(D84) ; ERROR()                   00559000
+D84      IDENT(VARA,'AB') :S(D85) ; ERROR()                             00560000
+D85      TEST (TEST 'A' | TEST) $ VARL :S(D86) ; ERROR()                00561000
+D86      IDENT(VARL,TEST) :S(D00) ; ERROR()                             00562000
+*                                                                       00563000
+*        TEST DEFERRED STRINGS                                          00564000
+*                                                                       00565000
+D00      TEST *'ABC' :S(D01) ; ERROR()                                  00566000
+D01      TEST *'ABD' :F(D06) ; ERROR()                                  00567000
+*                                                                       00568000
+*        TEST $ . WITH DEFERRED NAME ARGUMENTS                          00569000
+*                                                                       00570000
+D06      TEST 'ABC' $ *VAR :S(D07) ; ERROR()                            00571000
+D07      IDENT(VAR,'ABC') :S(D08) ; ERROR()                             00572000
+D08      TEST 'ABC' . *$'VARD' :S(D09) ; ERROR()                        00573000
+D09      IDENT(VARD,'ABC') :S(D10) ; ERROR()                            00574000
+*                                                                       00575000
+*        TEST LEN WITH DEFERRED ARGUMENT                                00576000
+*                                                                       00577000
+D10      &ANCHOR = 0                                                    00578000
+         TEST LEN(*3) $ VARL :S(D11) ; ERROR()                          00579000
+D11      IDENT(VARL,'ABC') :S(D15) ; ERROR()                            00580000
+*                                                                       00581000
+*        TEST TAB WITH DEFERRED ARGUMENT                                00582000
+*                                                                       00583000
+D15      TEST TAB(*3) $ VART :S(D16) ; ERROR()                          00584000
+D16      IDENT(VART,'ABC') :S(D21) ; ERROR()                            00585000
+-EJECT                                                                  00586000
+*                                                                       00587000
+*        TEST POS WITH DEFERRED ARGUMENT                                00588000
+*                                                                       00589000
+D21      &ANCHOR = 1                                                    00590000
+         TEST ARB $ VARA POS(*2) $ VARP :S(D26) ; ERROR()               00591000
+D26      (IDENT(VARA,'AB') IDENT(VARP)) :S(D27) ; ERROR()               00592000
+D27      &ANCHOR = 0                                                    00593000
+         TEST ARB $ VARA POS(*0) $ VARP :S(D35) ; ERROR()               00594000
+D35      IDENT(VARA VARP) :S(D36) ; ERROR()                             00595000
+*                                                                       00596000
+*        TEST RPOS WITH DEFERRED ARGUMENT                               00597000
+*                                                                       00598000
+D36      TEST ARB $ VARA RPOS(*25) :S(D37) ; ERROR()                    00599000
+D37      IDENT(VARA,'A') :S(D38) ; ERROR()                              00600000
+*                                                                       00601000
+*        TEST RTAB WITH DEFERRED ARGUMENT                               00602000
+*                                                                       00603000
+D38      TEST RTAB(*26) $ VARA :S(D43) ; ERROR()                        00604000
+D43      IDENT(VARA) :S(D49) ; ERROR()                                  00605000
+*                                                                       00606000
+*        TEST @ WITH DEFERRED ARGUMENT                                  00607000
+*                                                                       00608000
+D49      TEST LEN(6) @*VARA :S(D50) ; ERROR()                           00609000
+D50      IDENT(VARA,6) :S(D51) ; ERROR()                                00610000
+D51      TEST @*$'VARA' :S(D52) ; ERROR()                               00611000
+D52      IDENT(VARA,0) :S(D55) ; ERROR()                                00612000
+*                                                                       00613000
+*        TEST BREAK WITH DEFERRED ARGUMENT                              00614000
+*                                                                       00615000
+D55      TEST BREAK(*'C') $ VARA :S(D56) ; ERROR()                      00616000
+D56      IDENT(VARA,'AB') :S(D57) ; ERROR()                             00617000
+*                                                                       00618000
+*        TEST SPAN WITH DEFERRED ARGUMENT                               00619000
+*                                                                       00620000
+D57      TEST SPAN(*TEST) $ VARA :S(D64) ; ERROR()                      00621000
+D64      IDENT(TEST,VARA) :S(D70) ; ERROR()                             00622000
+*                                                                       00623000
+*        TEST BREAKX WITH DEFERRED ARGUMENT                             00624000
+*                                                                       00625000
+D70      (TEST TEST) POS(*0) BREAKX(*'E') $ VARA '.' :F(D71) ; ERROR()  00626000
+D71      IDENT(VARA,TEST 'ABCD') :S(D73) ; ERROR()                      00627000
+-EJECT                                                                  00628000
+*                                                                       00629000
+*        TEST ANY WITH DEFERRED ARGUMENT                                00630000
+*                                                                       00631000
+D73      TEST ANY(*'MXZ') $ VARA :S(D74) ; ERROR()                      00632000
+D74      IDENT(VARA,'M') :S(D75) ; ERROR()                              00633000
+*                                                                       00634000
+*        TEST NOTANY WITH DEFERRED ARGUMENT                             00635000
+*                                                                       00636000
+D75      TEST NOTANY(*'ABCDEFGHJKLMPQRSTUWXYZ') $ VARA :S(D77) ;        00637000
+.                                                          ERROR()      00638000
+D77      IDENT(VARA,'I') :S(D79) ; ERROR()                              00639000
+D79      :(ALLDONE)                                                     00640000
+         EJECT                                                          00641000
+*                                                                       00642000
+*        ERROR HANDLING ROUTINE                                         00643000
+*                                                                       00644000
+ERROR    OUTPUT = '****** ERROR DETECTED AT ' &LASTNO ' ********'       00645000
+         ERRCOUNT = ERRCOUNT + 1                                        00646000
+         OUTPUT = '***** RESUMING EXECUTION *******'       :(RETURN)    00647000
+*                                                                       00648000
+*        TERMINATION ROUTINE                                            00649000
+*                                                                       00650000
+ALLDONE                                                                 00651000
+         ERRCOUNT = ERRCOUNT + &ERRLIMIT - 100                          00652000
+         &ERRLIMIT = 100                                                00653000
+         OUTPUT = EQ(ERRCOUNT,0)                                        00654000
+.                 '****           NO ERRORS DETECTED         ****'      00655000
+         OUTPUT = '**********************************************'      00656000
+         &FULLSCAN = EQ(&FULLSCAN,0) 1           :S(FLOOP)              00657000
+         OUTPUT = '****           END OF DIAGNOSTICS         ****'      00658000
+         OUTPUT = '**********************************************'      00659000
+END                                                                     00660000
+./*                                                                     00661000
+-TITLE SPITBOL TEST PROGRAM #3 -- COMPUTE FACTORIAL TABLE               00662000
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 00663000
+*                                                                     * 00664000
+*        THIS PROGRAM COMPUTES AND PRINTS A TABLE OF N FACTORIAL      * 00665000
+*        FOR VALUES OF N FROM 1 THROUGH AN UPPER LIMIT "NX".          * 00666000
+*                                                                     * 00667000
+*        IT DEMONSTRATES A METHOD OF MANIPULATING NUMBERS WHICH ARE   * 00668000
+*        TOO LARGE FOR THE COMPUTER, AS STRINGS OF CHARACTERS.  THE   * 00669000
+*        COMMAS IN THE PRINTED VALUES ARE OPTIONAL, ADDED FOR READING * 00670000
+*        EASE.                                                        * 00671000
+*                                                                     * 00672000
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 00673000
+*                                                                       00674000
+*        INITIALIZATION.                                                00675000
+*                                                                       00676000
+         NX = 45                                                        00677000
+         N = 1                                                          00678000
+         NSET = 1                                                       00679000
+         NUM = ARRAY(1000)                                              00680000
+         NUM<1> = 1                                                     00681000
+         FILL = ARRAY('0:3')                                            00682000
+         FILL<0> = '000'                                                00683000
+         FILL<1> = '00'                                                 00684000
+         FILL<2> = '0'                                                  00685000
+*                                                                       00686000
+         OUTPUT = '          TABLE OF FACTORIALS FOR 1 THROUGH ' NX     00687000
+         OUTPUT =                                                       00688000
+*                                                                       00689000
+*        COMPUTE THE NEXT VALUE FROM THE PREVIOUS ONE.                  00690000
+*                                                                       00691000
+L1       I = 1                                                          00692000
+L2       NUM<I> = NUM<I> * N                           :F(ERR)          00693000
+         I = LT(I,NSET) I + 1                          :S(L2)           00694000
+         I = 1                                                          00695000
+L3       LT(NUM<I>,1000)                               :S(L4)           00696000
+         NUMX = NUM<I> / 1000                          :F(ERR)          00697000
+         NUM<I + 1> = NUM<I + 1> + NUMX                :F(ERR)          00698000
+         NUM<I> = NUM<I> - 1000 * NUMX                 :F(ERR)          00699000
+L4       I = LT(I,NSET) I + 1                          :S(L3)           00700000
+*                                                                       00701000
+*        FORM A STRING REPRESENTING THE FACTORIAL.                      00702000
+*                                                                       00703000
+L5       NSET = DIFFER(NUM<NSET + 1>) NSET + 1                          00704000
+         NUMBER = NUM<NSET>                            :F(ERR)          00705000
+         I = GT(NSET,1) NSET - 1                       :F(L7)           00706000
+L6       NUMBER = NUMBER ',' FILL<SIZE(NUM<I>)> NUM<I>                  00707000
+         I = GT(I,1) I - 1                             :S(L6)           00708000
+*                                                                       00709000
+*        OUTPUT A LINE OF THE TABLE.                                    00710000
+*                                                                       00711000
+L7       OUTPUT = N '!=' NUMBER                                         00712000
+         N = LT(N,NX) N + 1                            :S(L1)F(END)     00713000
+*                                                                       00714000
+*        ERROR TERMINATION.                                             00715000
+*                                                                       00716000
+ERR      OUTPUT = N '! CANNOT BE COMPUTED BECAUSE OF TABLE OVERFLOW.'   00717000
+         OUTPUT = '     INCREASE THE SIZE OF ARRAY "NUM".'              00718000
+*                                                                       00719000
+END                                                                     00720000
+./*                                                                     00721000
+-TITLE SPITBOL TEST PROGRAM #4 -- SYNTACTIC RECOGNIZER FOR SPITBOL      00722000
+*                                                                       00723000
+*        THIS PROGRAM IS A SYNTACTIC RECOGNIZER FOR SPITBOL STATEMENTS  00724000
+*                                                                       00725000
+*      FIRST A SERIES OF PATTERNS IS BUILD CULMINATING IN A PATTERN     00726000
+*      WHICH MATCHES ONLY SYNTACTICALLY CORRECT STATEMENTS.  CARD IMAGES00727000
+*      ARE THEN READ IN AND PROCESSED.  INCORRECT STATEMENTS ARE        00728000
+*      IDENTIFIED BY AN ERROR MESSAGE.                                  00729000
+*                                                                       00730000
+*      THE FUNCTION OPT FORMS A PATTERN THAT MATCHES EITHER NULL OR ITS 00731000
+*      ARGUMENT.                                                        00732000
+*                                                                       00733000
+         DEFINE('OPT(PATTERN)')                                         00734000
+*                                                                       00735000
+         LETTERS   =   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'                     00736000
+*                                                                       00737000
+*      ON THE IBM SYSTEM/360 LETTERS INCLUDE LOWER CASE AS WELL.        00738000
+*                                                                       00739000
+         DIGITS   =   '0123456789'                                      00740000
+         ALPHANUMERICS   =   LETTERS DIGITS                             00741000
+         BLANKS   =   SPAN(' ')                                         00742000
+         INTEGER   =   SPAN(DIGITS)                                     00743000
+         REAL   =   SPAN(DIGITS) '.' OPT(SPAN(DIGITS))                  00744000
+         IDENTIFIER   =   ANY(LETTERS) OPT(SPAN(ALPHANUMERICS '_.'))    00745000
+         UNARY   =   ANY('+-&.$*?¬@%#')                                 00746000
+         BINARY   =   ANY('-+.$*|/@*#') | '**'                          00747000
+         BINARYOP   =   BLANKS OPT(BINARY BLANKS)                       00748000
+         UNQALPHABET   =   &ALPHABET                                    00749000
+         UNQALPHABET   '"'   =                                          00750000
+         UNQALPHABET   "'"   =                                          00751000
+         DLITERAL   =   '"' SPAN(UNQALPHABET "'") '"'                   00752000
+         SLITERAL   =   "'" SPAN(UNQALPHABET '"') "'"                   00753000
+         LITERAL   =   SLITERAL | DLITERAL | INTEGER | REAL             00754000
+         ELEMENT   =   OPT(UNARY) (IDENTIFIER | LITERAL | *FUNCTION_CALL00755000
+.                      | '(' *EXPRESSION | OPT(BLANKS) ')' | *ARRAY_REF)00756000
+         OPERATION   =   *ELEMENT BINARYOP (*ELEMENT | *EXPRESSION)     00757000
+         EXPRESSION   =   OPT(BLANKS) (*ELEMENT | *OPERATION | NULL)    00758000
+.                         OPT(BLANKS)                                   00759000
+         ARG_LIST   =   *EXPRESSION OPT(',' *ARG_LIST)                  00760000
+         FUNCTION_CALL   =   IDENTIFIER '(' *ARG_LIST ')'               00761000
+         ARRAY_SUB   =   '<' *ARG_LIST '>' OPT(*ARRAY_SUB)              00762000
+         ARRAY_REF   =   IDENTIFIER ARRAY_SUB                           00763000
+         LABEL   =   ANY(ALPHANUMERICS) (BREAK(' ;') | REM)             00764000
+         LABEL_FIELD   =   OPT(LABEL)                                   00765000
+         GOTO   =   '(' EXPRESSION ')'                                  00766000
+         GOTO_FIELD   =   OPT(BLANKS ':' FENCE OPT(BLANKS) (GOTO | 'S'  00767000
+.                         GOTO | 'F' GOTO | 'S' GOTO OPT(BLANKS) 'F'    00768000
+.                         GOTO | 'F' GOTO OPT(BLANKS) 'S' GOTO)         00769000
+.                         OPT(BLANKS))                                  00770000
+         RULE   =   OPT(BLANKS ELEMENT (OPT(BLANKS) '=' OPT(OPT(BLANKS) 00771000
+.                   EXPRESSION) | OPT(BLANKS EXPRESSION OPT(OPT(BLANKS) 00772000
+.                   '=' OPT(OPT(BLANKS) EXPRESSION)))))                 00773000
+         EOS   =   RPOS(0) | ';'                                        00774000
+         STATEMENT   =   LABEL_FIELD RULE GOTO_FIELD EOS                00775000
+-EJECT                                                                  00776000
+*                                                                       00777000
+*      THE PATTERN FOR RECOGNIZING STATEMENTS IS NOW FORMED.  THE       00778000
+*      PROGRAM TO ANALYZE INPUT CARDS FOLLOWS.                          00779000
+*                                                                       00780000
+         COMMENT   =   ANY('*-')                                        00781000
+         CONTINUE   =   ANY('.+') . CC                                  00782000
+         &ANCHOR   =   1                                                00783000
+         &FULLSCAN   =   1                                              00784000
+         EOF   =                                                        00785000
+         INPUT(.INPUT,,72)                                              00786000
+*                                                                       00787000
+*      INITIALIZE PROCESS FROM FIRST CARD.                              00788000
+*                                                                       00789000
+READI    IMAGE   =   TRIM(INPUT)                       :F(END)          00790000
+         OUTPUT   =   '     ' IMAGE                                     00791000
+*                                                                       00792000
+*        DO NOT PROCESS COMMENT OR CONTINUE CARDS.                      00793000
+*                                                                       00794000
+         IMAGE   COMMENT                               :F(READC)S(READI)00795000
+NEXTST   IDENT(EOF)                                    :F(END)          00796000
+         OUTPUT   =   '     ' LINE                                      00797000
+         IMAGE   =   LINE                                               00798000
+READC    LINE   =   TRIM(INPUT)                        :F(ENDGAME)      00799000
+         LINE   COMMENT                                :S(PRINT)        00800000
+         LINE   CONTINUE   =                           :F(ANALYZE)      00801000
+         OUTPUT   =   '     ' CC LINE                                   00802000
+         IMAGE   =   IMAGE LINE                        :(READC)         00803000
+ANALYZE  IMAGE   STATEMENT   =                         :F(ERROR)        00804000
+         DIFFER(IMAGE)                                 :S(ANALYZE)      00805000
+         OUTPUT   =   '<<< NO SYNTACTIC ERROR >>>'                      00806000
+SKIP     OUTPUT   =                                    :(NEXTST)        00807000
+*                                                                       00808000
+*      IF AN ERRONEOUS STATEMENT IS  ENCOUNTERED IN A STRING OF         00809000
+*      STATEMENTS SEPARATED BY SEMICOLONS, SUBSEQUENT STATEMENTS ARE    00810000
+*      NOT PROCESSED.                                                   00811000
+*                                                                       00812000
+ERROR    OUTPUT   =   '<<< SYNTACTIC ERROR >>>'        :(SKIP)          00813000
+*                                                                       00814000
+PRINT    OUTPUT   =   '     ' LINE                     :(READC)         00815000
+ENDGAME  EOF   =   1                                   :(ANALYZE)       00816000
+*                                                                       00817000
+*                                                                       00818000
+OPT      OPT   =   NULL | PATTERN                      :(RETURN)        00819000
+END                                                                     00820000
+*                                                                       00821000
+*      A VARIETY OF CORRECT AND INCORRECT SPITBOL STATEMENTS FOLLOW     00822000
+*                                                                       00823000
+-LIST                                                                   00824000
+COMPUTE  X   =  Y + 3 ** -'2'                                           00825000
+       X   =   Y+Z                                                      00826000
+         ELEMENT<I,J>= ELEMENT<I,-J> + ELEMENT<-I,J>                    00827000
+       ELEMENT<I><J><K>   =   ELEMENT<K><J><I>                          00828000
+       A<X,Y,Z + 1>   =   F(X,STRUCTURE_BUILD(TYPE,LENGTH + 1))         00829000
+SETUP    PAT1   =   (BREAK(',:') $ FIRST | SPAN(' .') $ SECOND          00830000
+.                   . VALUE ARBNO(BAL | LEN(1))  :($SWITCH)             00831000
+       DEFINE('F(X,Y))                                                  00832000
+       L   =   LT(N,B<J> L + 1                                          00833000
+NEWONE_TRIAL   X   =   ¬COORD<1,K> X * X                                00834000
+       TRIM(INPUT)   PAT1    :S(OK)  :F(BAD)                            00835000
+   X   =   3.01; Y = 2.    ; Z   =   X * -Y                             00836000
+./*                                                                     00837000
+-TITLE SPITBOL TEST PROGRAM #5 -- DEMONSTRATION VERSION OF TREESORT4    00838000
+-STITL DRIVER                                                           00839000
+ DEFINE('TREESORT4(DATA,NUMBER_TO_SORT)')                               00840000
+ DEFINE('PRINTER()')                                                    00841000
+ DATA = ARRAY(24)                                                       00842000
+         INPUT(.INPUT,,72)                                              00843000
+READER J = J + 1                                                        00844000
+ DATA<J> = TRIM(INPUT)  :S(READER)                                      00845000
+ OUTPUT = 'UNSORTED DATA'                                               00846000
+ OUTPUT =                                                               00847000
+ PRINTER()                                                              00848000
+ TREESORT4(DATA,24)                                                     00849000
+ OUTPUT =                                                               00850000
+ OUTPUT = 'SORTED DATA'                                                 00851000
+ OUTPUT =                                                               00852000
+ PRINTER() :(END)                                                       00853000
+*                                                                       00854000
+PRINTER J = 0                                                           00855000
+PRINTL J = J + 1                                                        00856000
+ OUTPUT = DATA<J>    :S(PRINTL)F(RETURN)                                00857000
+-STITL ACTUAL TREESORT4 SUBROUTINE                                      00858000
+*             TREESORT4                                                 00859000
+*             ---------                                                 00860000
+*                                                                       00861000
+*             SORTING ALGORITHM DERIVED FROM FLOYD'S TREESORT3 PUBLISHED00862000
+*             IN CACM DEC. 1967 -- THE MODIFICATIONS DEVISED BY R. DEWAR00863000
+*             AND L.FISHER REDUCE THE NUMBER OF COMPARES FROM 2NLOGN    00864000
+*             TO NLOGN -- THIS VERSION CODED IN SNOBOL4 BY R. DEWAR     00865000
+*                                                                       00866000
+TREESORT4                                                               00867000
+.             NUMBER_IN_TREE = NUMBER_TO_SORT                           00868000
+              NODE_TO_SIFT = NUMBER_TO_SORT / 2                         00869000
+              RETURN_FROM_SIFT = .SIFT_RETURN_1                         00870000
+SIFT_CALL_1                                                             00871000
+.             HOLD_LOCATION = DATA<NODE_TO_SIFT> :(SIFT_NODE)           00872000
+SIFT_RETURN_1                                                           00873000
+.             NODE_TO_SIFT = GT(NODE_TO_SIFT,1)                         00874000
+.                              NODE_TO_SIFT - 1  :S(SIFT_CALL_1)        00875000
+SECOND_PHASE                                                            00876000
+.             RETURN_FROM_SIFT = .SIFT_RETURN_2                         00877000
+SIFT_RETURN_2                                                           00878000
+.             HOLD_LOCATION = DATA<NUMBER_IN_TREE>                      00879000
+              DATA<NUMBER_IN_TREE> = DATA<1>                            00880000
+              NUMBER_IN_TREE = GT(NUMBER_IN_TREE,1)                     00881000
+.                               NUMBER_IN_TREE - 1                      00882000
+.                                                :S(SIFT_NODE)F(RETURN) 00883000
+-EJECT                                                                  00884000
+SIFT_NODE                                                               00885000
+.             FATHER = NODE_TO_SIFT                                     00886000
+PULL_UP_LARGER_SON                                                      00887000
+.             LEFT_SON = FATHER * 2                                     00888000
+              LT(LEFT_SON,NUMBER_IN_TREE)        :S(COMPARE_SONS)       00889000
+              EQ(LEFT_SON,NUMBER_IN_TREE)        :S(LEFT_SON_HIGH)      00890000
+                                                 :(CHECK_FATHERS)       00891000
+COMPARE_SONS                                                            00892000
+.             RIGHT_SON = LEFT_SON + 1                                  00893000
+              LGT(DATA<LEFT_SON>,DATA<RIGHT_SON>)                       00894000
+.                                                :S(LEFT_SON_HIGH)      00895000
+RIGHT_SON_HIGH                                                          00896000
+.             DATA<FATHER> = DATA<RIGHT_SON>                            00897000
+              FATHER = RIGHT_SON                 :(PULL_UP_LARGER_SON)  00898000
+LEFT_SON_HIGH                                                           00899000
+.             DATA<FATHER> = DATA<LEFT_SON>                             00900000
+              FATHER = LEFT_SON                  :(PULL_UP_LARGER_SON)  00901000
+CHECK_FATHERS                                                           00902000
+.             HOLE_IN_TREE = FATHER                                     00903000
+TEST_NEXT_FATHER                                                        00904000
+.             FATHER_OF_HOLE = HOLE_IN_TREE / 2                         00905000
+              LT(FATHER_OF_HOLE,NODE_TO_SIFT)    :S(FILL_HOLE)          00906000
+              LGT(DATA<FATHER_OF_HOLE>,HOLD_LOCATION)                   00907000
+.                                                :S(FILL_HOLE)          00908000
+              DATA<HOLE_IN_TREE> = DATA<FATHER_OF_HOLE>                 00909000
+              HOLE_IN_TREE = FATHER_OF_HOLE      :(TEST_NEXT_FATHER)    00910000
+FILL_HOLE                                                               00911000
+.             DATA<HOLE_IN_TREE> = HOLD_LOCATION                        00912000
+.                                                :($RETURN_FROM_SIFT)   00913000
+END                                                                     00914000
+SHALL                                                                   00915000
+I                                                                       00916000
+COMPARE                                                                 00917000
+THEE                                                                    00918000
+TO                                                                      00919000
+A                                                                       00920000
+SUMMERS                                                                 00921000
+DAY                                                                     00922000
+THOU                                                                    00923000
+ART                                                                     00924000
+MORE                                                                    00925000
+LOVELY                                                                  00926000
+AND                                                                     00927000
+MORE                                                                    00928000
+TEMPORATE                                                               00929000
+ROUGH                                                                   00930000
+WINDS                                                                   00931000
+DO                                                                      00932000
+SHAKE                                                                   00933000
+THE                                                                     00934000
+DARLING                                                                 00935000
+BUDS                                                                    00936000
+OF                                                                      00937000
+MAY                                                                     00938000
+./*                                                                     00939000
+-TITLE SPITBOL TEST PROGRAM #6 -- TOPOLOGICAL SORT                      00940000
+*                                                                       00941000
+*        TOPOLOGICAL SORT                                               00942000
+*                                                                       00943000
+*   MAPS A PARTIAL ORDERING OF OBJECTS INTO A LINEAR ORDERING           00944000
+*                                                                       00945000
+*        A(1), A(2), ..., A(N)                                          00946000
+*                                                                       00947000
+*   SUCH THAT IF   A(S) < A(T) IN THE PARTIAL ORDERING,THEN S < T.      00948000
+*   (CF. D.E.KNUTH, THE ART OF COMPUTER PROGRAMMING,VOLUME 1,           00949000
+*   ADDISON-WESLEY,MASS.,1968, P.262)                                   00950000
+*                                                                       00951000
+         &DUMP = 2                                                      00952000
+         OUTPUT('OUT',6,'(121A1)')                                      00953000
+         PAIR      = BREAK('<') . MU LEN(1) BREAK(',') . NU LEN(1)      00954000
+         DATA('ITEM(COUNT,TOP)')                                        00955000
+         DATA('NODE(SUC,NEXT)')                                         00956000
+         DEFINE('DECR(X)')                                              00957000
+         DEFINE('INDEX(TAU)')                                           00958000
+         INPUT(.INPUT,,72)                                              00959000
+*                                                                       00960000
+*     READ IN THE NUMBER OF ITEMS, N, AND GENERATE AN ARRAY OF ITEMS.   00961000
+*                                                                       00962000
+*   EACH ITEM HAS TWO FIELDS, (COUNT,TOP), WHERE                        00963000
+*        COUNT = NO. OF ELEMENTS PRECEEDING IT.                         00964000
+         TOP = TOP OF LIST OF ITEMS SUCCEEDING IT.                      00965000
+*                                                                       00966000
+         N         = TRIM(INPUT)                                        00967000
+         X         = ARRAY('0:' N)                                      00968000
+*   INITIALIZE THE ITEMS TO (0,NULL).                                   00969000
+*                                                                       00970000
+T1       X<I>      =  ITEM(0,)              :F(T1A)                     00971000
+         I         =  I + 1                 :(T1)                       00972000
+*                                                                       00973000
+*   READ IN RELATIONS.                                                  00974000
+*                                                                       00975000
+T1A      OUT       = '1 THE RELATIONS ARE:'                             00976000
+T2A      REL       = TRIM(INPUT) ','        :F(T3A)                     00977000
+         OUTPUT    = REL                                                00978000
+T2       REL       PAIR  =                  :F(T2A)                     00979000
+         J         = INDEX(MU)                                          00980000
+         K         = INDEX(NU)                                          00981000
+*                                                                       00982000
+*   SINCE MU < NU, INCREASE THE COUNT OF THE KTH ITEM AND ADD A         00983000
+*   NODE TO THE LIST OF SUCCESSORS OF THE JTH ITEM.                     00984000
+*                                                                       00985000
+T3       COUNT(X<K>) = COUNT(X<K>) + 1                                  00986000
+         TOP(X<J>) = NODE(K,TOP(X<J>))      :(T2)                       00987000
+-EJECT                                                                  00988000
+*                                                                       00989000
+*    A QUEUE IS MAINTAINED OF THOSE ITEMS WITH ZERO COUNT FIELD.        00990000
+*    THE LINKS FOR THE QUEUE, QLINK, ARE KEPT IN THE COUNT FIELD.       00991000
+*    THE VARIABLES F,R POINT TO THE FRONT AND REAR OF THE QUEUE.        00992000
+*                                                                       00993000
+T3A      OPSYN('QLINK','COUNT')                                         00994000
+*                                                                       00995000
+*    INITIALIZE THE QUEUE FOR OUTPUT.                                   00996000
+*                                                                       00997000
+         R         = 0                                                  00998000
+         QLINK(X<0>) = 0                                                00999000
+         K         = 0                                                  01000000
+T4       K         = ?X<K + 1>  K + 1       :F(T4A)                     01001000
+         QLINK(X<R>) = EQ(COUNT(X<K>),0)  K :F(T4)                      01002000
+         R         = K                      :(T4)                       01003000
+T4A      F         = QLINK(X<0>)                                        01004000
+*                                                                       01005000
+*    OUTPUT THE FRONT OF THE QUEUE.                                     01006000
+*                                                                       01007000
+         OUT       = '0 THE LINEAR ORDERING IS:'                        01008000
+T5       OUTPUT    = NE(F,0)  $(F ':')      :F(T8)                      01009000
+         N         = N - 1                                              01010000
+         P         = TOP(X<F>)                                          01011000
+*    ERASE RELATIONS.                                                   01012000
+T6       IDENT(P)                           :S(T7)                      01013000
+         DECR(.COUNT(X<SUC(P)>))            :S(T6A)                     01014000
+*                                                                       01015000
+*    IF COUNT IS ZERO ADD  ITEM TO QUEUE.                               01016000
+*                                                                       01017000
+         QLINK(X<R>) = SUC(P)                                           01018000
+         R         = SUC(P)                                             01019000
+T6A      P         = NEXT(P)                :(T6)                       01020000
+*                                                                       01021000
+*    REMOVE FROM QUEUE.                                                 01022000
+*                                                                       01023000
+T7       F         = QLINK(X<F>)            :(T5)                       01024000
+*                                                                       01025000
+*    FUNCTION DEFINITIONS.                                              01026000
+*                                                                       01027000
+DECR     $X        = GT($X,1)  $X - 1       :S(RETURN)                  01028000
+         $X        = 0                      :(FRETURN)                  01029000
+*                                                                       01030000
+INDEX    INDEX     = DIFFER($(TAU ':'))  $(TAU ':')  :S(RETURN)         01031000
+         TERMCT    = LT(TERMCT,N)  TERMCT + 1    :F(FRETURN)            01032000
+         INDEX     = TERMCT                                             01033000
+         $(TERMCT ':')   =  TAU                                         01034000
+         $(TAU ':')   =  TERMCT             :(RETURN)                   01035000
+*                                                                       01036000
+T8       OUTPUT    = NE(N,0) 'THE ORDERING CONTAINS A LOOP.'            01037000
+END                                                                     01038000
+14                                                                      01039000
+LETTERS<ALPHANUM,NUMBERS<ALPHANUM                                       01040000
+BLANKS<OPTBLANKS                                                        01041000
+NUMBERS<REAL                                                            01042000
+NUMBERS<INTEGER                                                         01043000
+LETTERS<VARIABLE,ALPHANUM<VARIABLE                                      01044000
+BINARY<BINARYOP,BLANKS<BINARYOP                                         01045000
+UNQALPHABET<DLITERAL                                                    01046000
+UNQALPHABET<SLITERAL                                                    01047000
+SLITERAL<LITERAL,DLITERAL<LITERAL,INTEGER<LITERAL,REAL<LITERAL          01048000
+./*                                                                     01049000
+-TITLE SPITBOL TEST PROGRAM #7 -- SYMBOL TABLE GENERATOR                01050000
+*                                                                       01051000
+*        THIS PROGRAM DEMONSTRATES THE STORAGE OF SYMBOL TABLES         01052000
+*        USING A TECHIQUE IN WHICH NAMES ARE STORED AS LINKED LISTS     01053000
+*        OF CHARACTERS. THE DATA FUNCTION IS USED TO FORM THE           01054000
+*        REQUIRED NODES WHICH CONTAIN APPROPRIATE POINTERS TO BE        01055000
+*        USED ON FAILURE OR SUCCESS OF THE CHARACTER BY CHARACTER MATCH 01056000
+*                                                                       01057000
+-CODE                                                                   01058000
+         DATA('SYMB(CHAR,LINK,ALT,ASSOC,SUCC)')                         01059000
+         INPUT(.INPUT,,72)                                              01060000
+         SPC = '     ::'                                                01061000
+         ALPH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"                            01062000
+CLEAR    HEAD =                                                         01063000
+         SWITCH1 = .FIRST                                               01064000
+         X = 0                                                          01065000
+READA    OUTPUT =                                                       01066000
+READ     CARD = TRIM(INPUT)                      :F(END1)               01067000
+         OUTPUT = CARD                                                  01068000
+         DIFFER(CARD)                            :F(BADCARD)            01069000
+         CARD POS(0) '$' =                       :S(CONTROL)            01070000
+         CARD NOTANY(ALPH)                       :F(INCX)               01071000
+BADCARD  OUTPUT = '  CARD ABOVE IS ILLEGAL'      :(READ)                01072000
+INCX     X = X + 1                               :($SWITCH1)            01073000
+FIRST    SWITCH1 = .SEARCH                                              01074000
+F1       CARD LEN(1) . CH =                      :F(ERR)                01075000
+         HEAD = SYMB(CH)                                                01076000
+         CURRENT = HEAD                                                 01077000
+F2       CARD LEN(1) . CH =                      :F(INSERT)             01078000
+F3       SUCC(CURRENT) = SYMB(CH,CURRENT)                               01079000
+         CURRENT = SUCC(CURRENT)                 :(F2)                  01080000
+INSERT   ASSOC(CURRENT) = ASSOC(CURRENT) X ","   :(READ)                01081000
+SEARCH   CARD LEN(1) . CH =                      :F(ERR)                01082000
+         LGT(CHAR(HEAD), CH)                     :S(S7)                 01083000
+         IDENT(CHAR(HEAD),CH)                    :S(S5)                 01084000
+*                                                                       01085000
+*  FIRST CHARACTER OF HEAD IS < FIRST CHAR OF CHAR JUST READ            01086000
+*  IF ALT(HEAD) NULL THEN MUST EXTEND STRUCTURE                         01087000
+*                                                                       01088000
+         IDENT(ALT(HEAD))                        :S(S3)                 01089000
+         CURRENT = ALT(HEAD)                                            01090000
+S1       LGT(CHAR(CURRENT),CH)                   :S(S6)                 01091000
+         IDENT(CHAR(CURRENT),CH)                 :S(S4)                 01092000
+         IDENT(ALT(CURRENT))                     :S(S2)                 01093000
+         CURRENT = ALT(CURRENT)                  :(S1)                  01094000
+*                                                                       01095000
+*  NEW ALTERNATIVE MUST BE INSERTED AT END                              01096000
+*                                                                       01097000
+S2       ALT(CURRENT) = SYMB(CH,CURRENT)                                01098000
+*                                                                       01099000
+*  THEN REST OF WORD STRUNG OUT                                         01100000
+*                                                                       01101000
+         CURRENT = ALT(CURRENT)                  :(F2)                  01102000
+*                                                                       01103000
+*  NEW ALTERNATIVE MUST BE INSERTED AT HEAD OF LIST                     01104000
+*                                                                       01105000
+S3       ALT(HEAD) = SYMB(CH,HEAD)                                      01106000
+         CURRENT = ALT(HEAD)                     :(F2)                  01107000
+-EJECT                                                                  01108000
+*                                                                       01109000
+*  CHARACTER HAS BEEN FOUND. NOW LOOK AT NEXT HCARACTER OF WORD         01110000
+*                                                                       01111000
+S4       CARD LEN(1) . CH  =                     :F(INSERT)             01112000
+*  IF NO SUCCESSORS, STRING OUT REST OF WORD                            01113000
+*                                                                       01114000
+         IDENT(SUCC(CURRENT))                    :S(F3)                 01115000
+*                                                                       01116000
+*  OTHERWISE CONTINUE EXAMINATION                                       01117000
+*                                                                       01118000
+         CURRENT = SUCC(CURRENT)                 :(S1)                  01119000
+S5       CURRENT = HEAD                          :(S4)                  01120000
+*                                                                       01121000
+*  CHAR IS SMALLER THAN CURRENT ALTERNATIVE                             01122000
+*                                                                       01123000
+S6       Y = LINK(CURRENT)                                              01124000
+         ALT(Y) = IDENT(ALT(Y),CURRENT) SYMB(CH,Y)         :F(S6A)      01125000
+         Y = ALT(Y)                              :(S6B)                 01126000
+S6A      SUCC(Y) = SYMB(CH,Y)                                           01127000
+         Y = SUCC(Y)                                                    01128000
+S6B      ALT(Y) = CURRENT                                               01129000
+         LINK(CURRENT) = Y                                              01130000
+         CURRENT = Y                             :(F2)                  01131000
+*                                                                       01132000
+*  NEW ALTERNATIVE MUST BE LINKED TO HEAD, AT TOP OF LIST               01133000
+*                                                                       01134000
+S7       Y = HEAD                                                       01135000
+         HEAD = SYMB(CH)                                                01136000
+         LINK(Y) = HEAD                                                 01137000
+         ALT(HEAD) = Y                                                  01138000
+         CURRENT = HEAD                          :(F2)                  01139000
+CONTROL  IDENT(CARD,"*")                         :F(C1)                 01140000
+         OUTPUT =                                                       01141000
+         OUTPUT = '  (STRUCTURE IS CLEARED)'                            01142000
+         OUTPUT =                                :(CLEAR)               01143000
+C1       IDENT(CARD,'$')                         :F(C2)                 01144000
+         OUTPUT =                                                       01145000
+         OUTPUT = '  (PRINTOUT OF ENTIRE STRUCTURE FOLLOWS...)'         01146000
+         OUTPUT =                                                       01147000
+         IDENT(HEAD)                             :S(C4)                 01148000
+         HOLD =                                                         01149000
+         START = HEAD                            :(LISTEM)              01150000
+C2       IDENT(CARD)                             :S(BADCARD)            01151000
+         CARD NOTANY(ALPH)                       :S(BADCARD)            01152000
+-EJECT                                                                  01153000
+*                                                                       01154000
+*  HERE TO PRINT WORDS STARTING WITH SPECIFIED HEAD                     01155000
+*                                                                       01156000
+         OUTPUT =                                                       01157000
+         OUTPUT = '  (PRINTOUT OF ALL WORDS BEGINNING WITH "'           01158000
++          CARD '"...)'                                                 01159000
+         OUTPUT =                                                       01160000
+         HOLD = CARD                                                    01161000
+         CURRENT = HEAD                                                 01162000
+         CARD LEN(1) . CH =                                             01163000
+C3       IDENT(CHAR(CURRENT),CH)                 :S(NEXT)               01164000
+         CURRENT = ALT(CURRENT)                                         01165000
+         IDENT(CURRENT)                          :F(C3)                 01166000
+C4       OUTPUT = '  (NO WORDS)'                 :(READA)               01167000
+NEXT     CARD LEN(1) . CH =                      :F(SETUP)              01168000
+         CURRENT = SUCC(CURRENT)                                        01169000
+         IDENT(CURRENT)                          :S(C4)F(C3)            01170000
+SETUP    OUTPUT = DIFFER(ASSOC(CURRENT)) SPC HOLD '  ' ASSOC(CURRENT)   01171000
+         START = DIFFER(SUCC(CURRENT)) SUCC(CURRENT)  :F(C4)            01172000
+LISTEM   N = 0                                                          01173000
+         CURRENT = START                                                01174000
+L1       HOLD = HOLD CHAR(CURRENT)                                      01175000
+L2       OUTPUT = DIFFER(ASSOC(CURRENT)) SPC HOLD '  ' ASSOC(CURRENT)   01176000
+         CURRENT = DIFFER(SUCC(CURRENT)) SUCC(CURRENT)  :S(L1)          01177000
+BACKUP   CURRENT = DIFFER(ALT(CURRENT)) ALT(CURRENT)  :F(B1)            01178000
+         N = N + 1                                                      01179000
+         $('STACK' N) = LINK(CURRENT)                                   01180000
+         HOLD LEN(1) RPOS(0) = CHAR(CURRENT)     :(L2)                  01181000
+B1       Y = LINK(CURRENT)                                              01182000
+         IDENT(Y)                                :S(READA)              01183000
+         IDENT(Y,START) IDENT(ALT(Y),CURRENT)    :S(READA)              01184000
+         IDENT(Y,START) IDENT(ALT(Y))            :S(READA)              01185000
+         CURRENT = Y                                                    01186000
+         HOLD DIFFER($('STACK' N),Y)  LEN(1) RPOS(0) =  :S(BACKUP)      01187000
+         N = N - 1                               :(B1)                  01188000
+END1     OUTPUT =                                                       01189000
+         OUTPUT = '(ALL DATA PROCESSED)'                                01190000
+END                                                                     01191000
+ABC                                                                     01192000
+ABCD                                                                    01193000
+ABCDE                                                                   01194000
+BCDEF                                                                   01195000
+$$                                                                      01196000
+$*                                                                      01197000
+ELASTIC                                                                 01198000
+HAPPILY                                                                 01199000
+BOX                                                                     01200000
+FOX                                                                     01201000
+CARS                                                                    01202000
+GAITERS                                                                 01203000
+ALL                                                                     01204000
+DUMP                                                                    01205000
+JUNE                                                                    01206000
+IN                                                                      01207000
+$$                                                                      01208000
+$*                                                                      01209000
+SISTER                                                                  01210000
+SUSIE                                                                   01211000
+SELLS                                                                   01212000
+SEA                                                                     01213000
+SHELLS                                                                  01214000
+BY                                                                      01215000
+THE                                                                     01216000
+SEA                                                                     01217000
+SHORE                                                                   01218000
+$$                                                                      01219000
+$S                                                                      01220000
+$SH                                                                     01221000
+SOME                                                                    01222000
+SEA                                                                     01223000
+SHELLS                                                                  01224000
+SEND                                                                    01225000
+SAILORS                                                                 01226000
+SWIMMING                                                                01227000
+$$                                                                      01228000
+$S                                                                      01229000
+$SE                                                                     01230000
+$*                                                                      01231000
+$$                                                                      01232000
+CATTLE                                                                  01233000
+CARP                                                                    01234000
+CAT                                                                     01235000
+GORGE                                                                   01236000
+MONSTER                                                                 01237000
+MONEY                                                                   01238000
+CAR                                                                     01239000
+DOG                                                                     01240000
+METAL                                                                   01241000
+CAVE                                                                    01242000
+CAKE                                                                    01243000
+CAT                                                                     01244000
+$$                                                                      01245000
+$MON                                                                    01246000
+$M                                                                      01247000
+$C                                                                      01248000
+$CA                                                                     01249000
+$CAT                                                                    01250000
+$CATT                                                                   01251000
+$CAX                                                                    01252000
+$$                                                                      01253000
+./*                                                                     01254000
+-TITLE SPITBOL TEST PROGRAM #8 -- BRIDGE DEALER                         01255000
+         DATA('CARD(NUM,NEXT)')                                         01256000
+*                                                                       01257000
+         OUTPUT('TITLE',6,'(14H1THIS IS HAND ,110A1)')                  01258000
+         OUTPUT('DEALER',6,'(11H DEALER IS ,110A1)')                    01259000
+         OUTPUT('SKIP',6,'(A1)')                                        01260000
+*                                                                       01261000
+         DEFINE('INSERT(LIST,CARD)TEMP')               :(INSERTEND)     01262000
+*                                                                       01263000
+INSERT   $LIST  =  IDENT($LIST)  CARD(NUM(CARD),NULL)  :S(RETURN)       01264000
+         $LIST  =  GT(NUM(CARD),NUM($LIST))  CARD(NUM(CARD),$LIST)      01265000
+.                                                      :S(RETURN)       01266000
+         TEMP  =  $LIST                                                 01267000
+INS1     IDENT(NEXT(TEMP))                             :S(INS2)         01268000
+         NEXT(TEMP)  =  GT(NUM(CARD),NUM(NEXT(TEMP)))                   01269000
+.                       CARD(NUM(CARD),NEXT(TEMP))     :S(RETURN)       01270000
+         TEMP  =  NEXT(TEMP)                           :(INS1)          01271000
+INS2     NEXT(TEMP)  =  CARD(NUM(CARD),NULL)           :(RETURN)        01272000
+INSERTEND                                                               01273000
+*                                                                       01274000
+*                                                                       01275000
+         DEFINE('LINE(STR1,COL1,STR2,COL2)BL1,BL2')    :(LINEEND)       01276000
+*                                                                       01277000
+LINE     BL  LEN(COL1 - 1) . BL1                                        01278000
+         IDENT(STR2)                                   :S(LINE1)        01279000
+         BL  LEN(COL2 - (COL1 + SIZE(STR1))) . BL2                      01280000
+LINE1    LINE  =  BL1  STR1  BL2  STR2                 :(RETURN)        01281000
+LINEEND                                                                 01282000
+*                                                                       01283000
+*                                                                       01284000
+         DEFINE('NTH(LIST,NUM)TEMP')                   :(NTHEND)        01285000
+*                                                                       01286000
+NTH      NTH  =  EQ(NUM,0)  $LIST                      :F(NTH1)         01287000
+         $LIST  =  NEXT($LIST)                         :(RETURN)        01288000
+NTH1     TEMP  =  $LIST                                                 01289000
+NTH2     NUM  =  NUM - 1                                                01290000
+         NTH  =  EQ(NUM,0)  NEXT(TEMP)                 :S(NTH3)         01291000
+         TEMP  =  NEXT(TEMP)                           :(NTH2)          01292000
+NTH3     NEXT(TEMP)  =  NEXT(NEXT(TEMP))               :(RETURN)        01293000
+NTHEND                                                                  01294000
+*                                                                       01295000
+*                                                                       01296000
+         DEFINE('RANDOM(N)')                           :(RANDOMEND)     01297000
+RANDOM   RAN.VAR  =  RAN.VAR * 1061 + 3251                              01298000
+         RAN.VAR  ARB  RPOS(5)  =                                       01299000
+         RANDOM  =  (RAN.VAR * N) / 100000             :(RETURN)        01300000
+RANDOMEND                                                               01301000
+*                                                                       01302000
+*                                                                       01303000
+         DEFINE('SUITL(HAND,SUIT)')                    :(SUITLEND)      01304000
+*                                                                       01305000
+SUITL    SUITL  =  SUIT  '  '                                           01306000
+SUITL1   GT(NUM($HAND),$SUIT)                          :F(RETURN)       01307000
+         SUITL  =  SUITL  $(NUM($HAND) - $SUIT)                         01308000
+         $HAND  =  DIFFER(NEXT($HAND))  NEXT($HAND) :S(SUITL1)F(RETURN) 01309000
+SUITLEND                                                                01310000
+-EJECT                                                                  01311000
+*                                                                       01312000
+*                  CONSTANTS                                            01313000
+*                                                                       01314000
+         BL  =  '                                        '              01315000
+.               '                                        '              01316000
+         S  =  39                                                       01317000
+         H  =  26                                                       01318000
+         D  =  13                                                       01319000
+         C  =  0                                                        01320000
+         $1  =  2                                                       01321000
+         $2  =  3                                                       01322000
+         $3  =  4                                                       01323000
+         $4  =  5                                                       01324000
+         $5  =  6                                                       01325000
+         $6  =  7                                                       01326000
+         $7  =  8                                                       01327000
+         $8  =  9                                                       01328000
+         $9  =  10                                                      01329000
+         $10  =  'J'                                                    01330000
+         $11  =  'Q'                                                    01331000
+         $12  =  'K'                                                    01332000
+         $13  =  'A'                                                    01333000
+         DEALSEQ  =  'NORTH,EAST,SOUTH,WEST,NORTH,'                     01334000
+         RAN.VAR  =  157                                                01335000
+         DEALMAX  =  3                                                  01336000
+         NTHDEAL  =                                                     01337000
+         DEAL  =  'WEST'                                                01338000
+NEWDEAL  NTHDEAL  =  LT(NTHDEAL,DEALMAX)  NTHDEAL + 1  :F(END)          01339000
+         N  =  1                                                        01340000
+         NORTH  =                                                       01341000
+         EAST  =                                                        01342000
+         SOUTH  =                                                       01343000
+         WEST  =                                                        01344000
+         DECK  =                                                        01345000
+DLOOP    DECK  =  CARD(N,DECK)                                          01346000
+         N  =  LT(N,52)  N + 1                         :S(DLOOP)        01347000
+         DEALSEQ  DEAL  ','  BREAK(',') . DEAL         :F(ERR)          01348000
+         HAND  =  DEAL                                                  01349000
+         N  =  52                                                       01350000
+NLOOP    DEALSEQ  HAND  ','  BREAK(',') . HAND         :F(ERR)          01351000
+         INSERT(HAND,NTH('DECK',RANDOM(N)))                             01352000
+         N  =  GT(N,1)  N - 1                          :S(NLOOP)        01353000
+-EJECT                                                                  01354000
+*                                                                       01355000
+*                  OUTPUT OF HAND                                       01356000
+*                                                                       01357000
+         TITLE  =  NTHDEAL                                              01358000
+         DEALER  =  DEAL                                                01359000
+         SKIP = '        '                                              01360000
+         OUTPUT  =  LINE('NORTH',40)                                    01361000
+         OUTPUT  =                                                      01362000
+         OUTPUT  =  LINE(SUITL('NORTH','S'),40)                         01363000
+         OUTPUT  =  LINE(SUITL('NORTH','H'),40)                         01364000
+         OUTPUT  =  LINE(SUITL('NORTH','D'),40)                         01365000
+         OUTPUT  =  LINE(SUITL('NORTH','C'),40)                         01366000
+         SKIP = '        '                                              01367000
+         OUTPUT  =  LINE('WEST',20,'EAST',60)                           01368000
+         OUTPUT  =                                                      01369000
+         OUTPUT  =  LINE(SUITL('WEST','S'),20,                          01370000
+.                        SUITL('EAST','S'),60)                          01371000
+         OUTPUT  =  LINE(SUITL('WEST','H'),20,                          01372000
+.                        SUITL('EAST','H'),60)                          01373000
+         OUTPUT  =  LINE(SUITL('WEST','D'),20,                          01374000
+.                        SUITL('EAST','D'),60)                          01375000
+         OUTPUT  =  LINE(SUITL('WEST','C'),20,                          01376000
+.                        SUITL('EAST','C'),60)                          01377000
+         SKIP = '        '                                              01378000
+         OUTPUT  =  LINE('SOUTH',40)                                    01379000
+         OUTPUT  =                                                      01380000
+         OUTPUT  =  LINE(SUITL('SOUTH','S'),40)                         01381000
+         OUTPUT  =  LINE(SUITL('SOUTH','H'),40)                         01382000
+         OUTPUT  =  LINE(SUITL('SOUTH','D'),40)                         01383000
+         OUTPUT  =  LINE(SUITL('SOUTH','C'),40)                         01384000
+.                                                      :(NEWDEAL)       01385000
+END                                                                     01386000
+./*                                                                     01387000
